@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  reactStrictMode: false,
+  images: {
+    domains: ['cdn.shopify.com'],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
