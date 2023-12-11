@@ -11,9 +11,9 @@ import {
   Button,
 } from '@nextui-org/react';
 import newRequest from '@/helpers/newRequest';
-import UploadIcon from '@/assets/uploadIcon';
 import DownloadIcon from '@/assets/DownloadIcon';
 import Image from 'next/image';
+import UploadIcon from '@/assets/UploadIcon';
 
 export default function Orders() {
   const [pendingOrders, setPendingOrders] = React.useState([]);

@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <NextUIProvider>
           <Navbar />
-          <div className='px-20 py-8'>{children}</div>
+          <div className='px-2 sm:px-20 py-8'>{children}</div>
         </NextUIProvider>
       </body>
     </html>
