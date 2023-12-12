@@ -1,8 +1,13 @@
 import React from 'react';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from '@nextui-org/react';
 import { AcmeLogo } from '@/assets/AcmeLogo';
+import { usePathname } from 'next/navigation';
 
 export default function GlobalNavbar() {
+  const pathName = usePathname();
+
+  const isActive = (path: string) => pathName === path;
+
   return (
     <Navbar
       classNames={{
@@ -27,29 +32,26 @@ export default function GlobalNavbar() {
         <p className='font-bold text-inherit'>Titan</p>
       </NavbarBrand>
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
+        <NavbarItem isActive={isActive('/')}>
+          <Link color='foreground' href='/'>
             Home
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href='#' aria-current='page'>
+        <NavbarItem isActive={isActive('/dashboard/orders')}>
+          <Link color='foreground' href='/dashboard/orders' aria-current='page'>
             Orders
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color='foreground' href='#'>
+        <NavbarItem isActive={isActive('/dashboard/shipping')}>
+          <Link color='foreground' href='/dashboard/shipping'>
             Shipping
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
-        <NavbarItem className='hidden lg:flex'>
-          <Link href='#'>Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color='primary' href='#' variant='flat'>
-            Sign Up
+        <NavbarItem isActive={isActive('/login')}>
+          <Button as={Link} color='primary' href='/login' variant='flat'>
+            Login
           </Button>
         </NavbarItem>
       </NavbarContent>
