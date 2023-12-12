@@ -76,7 +76,7 @@ export default function Orders() {
         <TableCell>{prints[print].size}</TableCell>
         <TableCell>{prints[print].quantity}</TableCell>
         <TableCell>
-          <Button isIconOnly color='success' aria-label='Like'>
+          <Button isIconOnly color='secondary' aria-label='Like'>
             <UploadIcon />
           </Button>
         </TableCell>
