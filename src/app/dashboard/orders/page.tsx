@@ -69,6 +69,7 @@ export default function Orders() {
             <div className='mt-8 ml-2'>
               <div className='font-semibold'>{print}</div>
               <div>{prints[print].sku}</div>
+              <div>{prints[print].sku.includes('B') ? 'Black Tee' : 'White Tee'}</div>
             </div>
           </div>
         </TableCell>
