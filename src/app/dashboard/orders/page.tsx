@@ -34,11 +34,8 @@ export default function Orders() {
     const myPrintsMap = {};
 
     pendingOrders.forEach((order) => {
-      if (!order.line_items) return null;
-
       order.line_items.forEach((item) => {
-        if (!item.title) return null;
-
+        if (!item.sku.includes('B') && !item.sku.includes('W')) return null;
         if (!myPrintsMap[item.title]) {
           myPrintsMap[item.title] = {
             title: item.title,
