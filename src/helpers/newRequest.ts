@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // THIS SHOULD BE FALSE IN PRODUCTION
-const isLocal = true;
+const isLocal = false;
 
 const url = isLocal
   ? 'http://localhost:3001/api'
