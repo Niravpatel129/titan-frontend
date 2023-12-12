@@ -14,8 +14,10 @@ import newRequest from '@/helpers/newRequest';
 import DownloadIcon from '@/assets/DownloadIcon';
 import Image from 'next/image';
 import UploadIcon from '@/assets/UploadIcon';
+import isAuth from '@/components/IsAuth/IsAuth';
+import DashboardPageWrapper from '@/components/DashboardPageWrapper/DashboardPageWrapper';
 
-export default function Orders() {
+function Orders() {
   const [pendingOrders, setPendingOrders] = React.useState([]);
   const [prints, setPrints] = React.useState({});
   const [selectedKeys, setSelectedKeys]: any = React.useState();
@@ -90,21 +92,25 @@ export default function Orders() {
   });
 
   return (
-    <Table
-      aria-label='Example static collection table'
-      selectionMode='multiple'
-      selectedKeys={selectedKeys}
-      onSelectionChange={setSelectedKeys}
-    >
-      <TableHeader>
-        <TableColumn>Design</TableColumn>
-        <TableColumn>Size</TableColumn>
-        <TableColumn>Qty</TableColumn>
-        <TableColumn>Front</TableColumn>
-        <TableColumn>Back</TableColumn>
-        <TableColumn>Status</TableColumn>
-      </TableHeader>
-      <TableBody>{renderPendingOrders}</TableBody>
-    </Table>
+    <DashboardPageWrapper>
+      <Table
+        aria-label='Example static collection table'
+        selectionMode='multiple'
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+      >
+        <TableHeader>
+          <TableColumn>Design</TableColumn>
+          <TableColumn>Size</TableColumn>
+          <TableColumn>Qty</TableColumn>
+          <TableColumn>Front</TableColumn>
+          <TableColumn>Back</TableColumn>
+          <TableColumn>Status</TableColumn>
+        </TableHeader>
+        <TableBody>{renderPendingOrders}</TableBody>
+      </Table>
+    </DashboardPageWrapper>
   );
 }
+
+export default isAuth(Orders);
