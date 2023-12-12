@@ -1,7 +1,7 @@
 'use client';
-import useLogin from '@/hooks/useAuth';
+import useLogin from '@/hooks/useLogin';
 import { Button, Card, CardBody, Input, Link, Tab, Tabs } from '@nextui-org/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function LoginPage() {
   const [selected, setSelected]: any = React.useState('login');
@@ -16,6 +16,13 @@ export default function LoginPage() {
     email: '',
     password: '',
   });
+
+  useEffect(() => {
+    setFormData({
+      email: localStorage.getItem('previousEmail'),
+      password: localStorage.getItem('previousPassword'),
+    });
+  }, []);
 
   const handleSubmit = (type) => {
     if (formData.email === '') {
@@ -43,6 +50,9 @@ export default function LoginPage() {
     } else {
       signUp(formData.name, formData.email, formData.password);
     }
+
+    localStorage.setItem('previousEmail', formData.email);
+    localStorage.setItem('previousPassword', formData.password);
   };
 
   const renderError = (key) => {

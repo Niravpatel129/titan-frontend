@@ -1,15 +1,27 @@
 import newRequest from '@/helpers/newRequest';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function useLogin() {
   const [error, setError] = useState(null);
+  const [user, setUser] = useState();
   const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      setUser(JSON.parse(user));
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
-      await newRequest.post('/auth/login', { email, password });
+      const res = await newRequest.post('/auth/login', { email, password });
       router.push('/dashboard/orders');
+      setUser(res.data.user);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
     } catch (err) {
       setError(err.response.data);
     }
@@ -17,11 +29,14 @@ export default function useLogin() {
 
   const signUp = async (name, email, password) => {
     try {
-      await newRequest.post('/auth/signup', {
+      const res = await newRequest.post('/auth/signup', {
         name,
         email,
         password,
       });
+
+      setUser(res.data.user);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
     } catch (err) {
       setError(err.response.data);
     }
@@ -31,10 +46,12 @@ export default function useLogin() {
     try {
       await newRequest.post('/auth/logout');
       router.push('/');
+      setUser(null);
+      localStorage.removeItem('user');
     } catch (err) {
       setError(err.response.data);
     }
   };
 
-  return { login, signUp, logout, error };
+  return { login, signUp, logout, error, user };
 }

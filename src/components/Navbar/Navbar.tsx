@@ -1,9 +1,10 @@
-import React from 'react';
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from '@nextui-org/react';
 import { AcmeLogo } from '@/assets/AcmeLogo';
+import useLogin from '@/hooks/useLogin';
+import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
 import { usePathname } from 'next/navigation';
 
 export default function GlobalNavbar() {
+  const { user, logout } = useLogin();
   const pathName = usePathname();
 
   const isActive = (path: string) => pathName === path;
@@ -49,11 +50,19 @@ export default function GlobalNavbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
-        <NavbarItem isActive={isActive('/login')}>
-          <Button as={Link} color='primary' href='/login' variant='flat'>
-            Login
-          </Button>
-        </NavbarItem>
+        {!user ? (
+          <NavbarItem isActive={isActive('/login')}>
+            <Button as={Link} color='primary' href='/login' variant='flat'>
+              Login
+            </Button>
+          </NavbarItem>
+        ) : (
+          <NavbarItem isActive={isActive('/login')}>
+            <Button as={Link} color='primary' href='/login' variant='flat'>
+              Logout
+            </Button>
+          </NavbarItem>
+        )}
       </NavbarContent>
     </Navbar>
   );

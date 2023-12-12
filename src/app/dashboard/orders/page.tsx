@@ -1,21 +1,21 @@
 'use client';
-import React, { useEffect } from 'react';
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Chip,
-  Button,
-} from '@nextui-org/react';
-import newRequest from '@/helpers/newRequest';
 import DownloadIcon from '@/assets/DownloadIcon';
-import Image from 'next/image';
 import UploadIcon from '@/assets/UploadIcon';
-import isAuth from '@/components/IsAuth/IsAuth';
 import DashboardPageWrapper from '@/components/DashboardPageWrapper/DashboardPageWrapper';
+import isAuth from '@/components/IsAuth/IsAuth';
+import newRequest from '@/helpers/newRequest';
+import {
+  Button,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@nextui-org/react';
+import Image from 'next/image';
+import React, { useEffect } from 'react';
 
 function Orders() {
   const [pendingOrders, setPendingOrders] = React.useState([]);
@@ -37,7 +37,7 @@ function Orders() {
 
     pendingOrders.forEach((order) => {
       order.line_items.forEach((item) => {
-        if (!item.sku.includes('B') && !item.sku.includes('W')) return null;
+        if (!item?.sku?.includes('B') && !item?.sku?.includes('W')) return null;
         if (!myPrintsMap[item.title]) {
           myPrintsMap[item.title] = {
             title: item.title,
@@ -47,15 +47,26 @@ function Orders() {
             back: item.back,
             sku: item.sku,
             image: item?.product?.image?.src,
+            order: [order.id],
+            status: 'pending',
           };
         } else {
           myPrintsMap[item.title].quantity += 1;
+          myPrintsMap[item.title].order.push(order.id);
         }
       });
     });
 
     setPrints(myPrintsMap);
   }, [pendingOrders]);
+
+  const handlePrint = (items) => {
+    console.log('🚀  items:', items);
+    const updatedPrintsStatus = { ...prints };
+    updatedPrintsStatus[items.title].status = 'printing';
+
+    setPrints(updatedPrintsStatus);
+  };
 
   const renderPendingOrders: any = Object.keys(prints).map((print, index) => {
     if (!prints[print].image) return null;
@@ -75,17 +86,26 @@ function Orders() {
         <TableCell>{prints[print].size}</TableCell>
         <TableCell>{prints[print].quantity}</TableCell>
         <TableCell>
-          <Button isIconOnly color='secondary' aria-label='Like'>
+          <Button
+            isIconOnly
+            color='danger'
+            aria-label='Like'
+            onClick={() => {
+              handlePrint(prints[print]);
+            }}
+          >
             <UploadIcon />
           </Button>
         </TableCell>
         <TableCell>
-          <Button isIconOnly color='danger' aria-label='Like'>
+          <Button isIconOnly color='danger' aria-label='Like' isDisabled={true}>
             <DownloadIcon />
           </Button>
         </TableCell>
         <TableCell>
-          <Chip color='primary'>Pending</Chip>
+          <Chip color='primary'>
+            <span className='capitalize'>{prints[print].status}</span>
+          </Chip>
         </TableCell>
       </TableRow>
     );
