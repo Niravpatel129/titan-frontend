@@ -1,9 +1,62 @@
 'use client';
+import useLogin from '@/hooks/useAuth';
+import { Button, Card, CardBody, Input, Link, Tab, Tabs } from '@nextui-org/react';
 import React from 'react';
-import { Tabs, Tab, Input, Link, Button, Card, CardBody, CardHeader } from '@nextui-org/react';
 
 export default function LoginPage() {
   const [selected, setSelected]: any = React.useState('login');
+  const [formData, setFormData]: any = React.useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+  const { login, signUp, error }: any = useLogin();
+  const [errors, setErrors]: any = React.useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  const handleSubmit = (type) => {
+    if (formData.email === '') {
+      setErrors({ ...errors, email: 'Email is required' });
+      return;
+    }
+
+    if (formData.password === '') {
+      setErrors({ ...errors, password: 'Password is required' });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setErrors({ ...errors, password: 'Password must be at least 6 characters' });
+      return;
+    }
+
+    if (formData.name === '' && type === 'signup') {
+      setErrors({ ...errors, name: 'Name is required' });
+      return;
+    }
+
+    if (type === 'login') {
+      login(formData.email, formData.password);
+    } else {
+      signUp(formData.name, formData.email, formData.password);
+    }
+  };
+
+  const renderError = (key) => {
+    return (
+      <p className='text-xs -mt-2 text-[#ff2424]'>
+        <span className='text-error'>{errors[key]}</span>
+      </p>
+    );
+  };
+
+  const handleInputChange = (e) => {
+    setErrors({ ...errors, [e.target.name]: '' });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className='flex items-center justify-center'>
@@ -18,13 +71,31 @@ export default function LoginPage() {
           >
             <Tab key='login' title='Login'>
               <form className='flex flex-col gap-4'>
-                <Input isRequired label='Email' placeholder='Enter your email' type='email' />
                 <Input
                   isRequired
+                  name='email'
+                  label='Email'
+                  placeholder='Enter your email'
+                  type='email'
+                  value={formData.email}
+                  onChange={(e) => handleInputChange(e)}
+                />
+                {renderError('email')}
+                <Input
+                  isRequired
+                  name='password'
                   label='Password'
                   placeholder='Enter your password'
                   type='password'
+                  value={formData.password}
+                  onChange={(e) => handleInputChange(e)}
                 />
+                {renderError('password')}
+                {error && (
+                  <p className='text-xs -mt-2 text-[#ff2424]'>
+                    <span className='text-error'>{error}</span>
+                  </p>
+                )}
                 <p className='text-center text-small'>
                   Need to create an account?{' '}
                   <Link size='sm' onPress={() => setSelected('sign-up')}>
@@ -32,22 +103,48 @@ export default function LoginPage() {
                   </Link>
                 </p>
                 <div className='flex gap-2 justify-end'>
-                  <Button fullWidth color='primary'>
+                  <Button fullWidth color='primary' onClick={() => handleSubmit('login')}>
                     Login
                   </Button>
                 </div>
               </form>
             </Tab>
             <Tab key='sign-up' title='Sign up'>
-              <form className='flex flex-col gap-4 h-[300px]'>
-                <Input isRequired label='Name' placeholder='Enter your name' type='password' />
-                <Input isRequired label='Email' placeholder='Enter your email' type='email' />
+              <form className='flex flex-col gap-4 h-[350px]'>
+                <Input
+                  isRequired
+                  label='Name'
+                  name='name'
+                  placeholder='Enter your name'
+                  value={formData.name}
+                  onChange={(e) => handleInputChange(e)}
+                />
+                {renderError('name')}
+                <Input
+                  isRequired
+                  label='Email'
+                  name='email'
+                  placeholder='Enter your email'
+                  type='email'
+                  value={formData.email}
+                  onChange={(e) => handleInputChange(e)}
+                />
+                {renderError('email')}
                 <Input
                   isRequired
                   label='Password'
+                  name='password'
                   placeholder='Enter your password'
                   type='password'
+                  value={formData.password}
+                  onChange={(e) => handleInputChange(e)}
                 />
+                {renderError('password')}
+                {error && (
+                  <p className='text-xs -mt-2 text-[#ff2424]'>
+                    <span className='text-error'>{error}</span>
+                  </p>
+                )}
                 <p className='text-center text-small'>
                   Already have an account?{' '}
                   <Link size='sm' onPress={() => setSelected('login')}>
@@ -55,7 +152,7 @@ export default function LoginPage() {
                   </Link>
                 </p>
                 <div className='flex gap-2 justify-end'>
-                  <Button fullWidth color='primary'>
+                  <Button fullWidth color='primary' onClick={() => handleSubmit('signup')}>
                     Sign up
                   </Button>
                 </div>
