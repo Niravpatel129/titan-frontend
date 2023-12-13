@@ -7,6 +7,10 @@ import newRequest from '@/helpers/newRequest';
 import {
   Button,
   Chip,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +25,7 @@ function Orders() {
   const [pendingOrders, setPendingOrders] = React.useState([]);
   const [prints, setPrints] = React.useState({});
   const [selectedKeys, setSelectedKeys]: any = React.useState();
+  const [printQuantity, setPrintQuantity]: any = React.useState(1);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -47,12 +52,12 @@ function Orders() {
             back: item.back,
             sku: item.sku,
             image: item?.product?.image?.src,
-            order: [order.id],
+            orders: [order.id],
             status: 'pending',
           };
         } else {
           myPrintsMap[item.title].quantity += 1;
-          myPrintsMap[item.title].order.push(order.id);
+          myPrintsMap[item.title].orders.push(order.id);
         }
       });
     });
@@ -61,11 +66,25 @@ function Orders() {
   }, [pendingOrders]);
 
   const handlePrint = (items) => {
-    console.log('🚀  items:', items);
     const updatedPrintsStatus = { ...prints };
     updatedPrintsStatus[items.title].status = 'printing';
 
     setPrints(updatedPrintsStatus);
+  };
+
+  const handlePrintComplete = async (prints) => {
+    const ordersThatArePrinted = prints.orders.slice(0, printQuantity);
+
+    try {
+      const res = await newRequest.post('/readyOrders/addOrderToPrinted', {
+        shopifyOrderId: ordersThatArePrinted,
+        status: 'printed',
+      });
+
+      console.log('🚀  res:', res);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const renderPendingOrders: any = Object.keys(prints).map((print, index) => {
@@ -103,9 +122,53 @@ function Orders() {
           </Button>
         </TableCell>
         <TableCell>
-          <Chip color='primary'>
-            <span className='capitalize'>{prints[print].status}</span>
-          </Chip>
+          <Popover
+            placement='bottom'
+            showArrow
+            offset={10}
+            onClose={() => {
+              setPrintQuantity(1);
+            }}
+          >
+            <PopoverTrigger>
+              <Chip color='primary'>
+                <span className='capitalize'>{prints[print].status}</span>
+              </Chip>
+            </PopoverTrigger>
+            <PopoverContent className='w-[240px]'>
+              {(titleProps) => (
+                <div className='px-1 py-2 w-full'>
+                  <p className='text-small font-bold text-foreground' {...titleProps}>
+                    Complete Prints
+                  </p>
+                  <div className='mt-2 flex flex-col gap-2 w-full'>
+                    <Input
+                      label={`Quantity - Req: ${prints[print].quantity}`}
+                      size='sm'
+                      variant='bordered'
+                      // max={prints[print].quantity}
+                      // min={1}
+                      value={printQuantity}
+                      onValueChange={(value) => {
+                        setPrintQuantity(value);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Button
+                      color='danger'
+                      className='mt-2 w-full'
+                      onClick={() => {
+                        handlePrintComplete(prints[print]);
+                      }}
+                    >
+                      Complete
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </PopoverContent>
+          </Popover>
         </TableCell>
       </TableRow>
     );
