@@ -27,13 +27,13 @@ function Orders() {
   const [selectedKeys, setSelectedKeys]: any = React.useState();
   const [printQuantity, setPrintQuantity]: any = React.useState(1);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const res = await newRequest('/orders/pending');
-      if (res.status !== 200) return console.error(res.data);
-      setPendingOrders(res.data);
-    };
+  const fetchOrders = async () => {
+    const res = await newRequest('/orders/pending');
+    if (res.status !== 200) return console.error(res.data);
+    setPendingOrders(res.data);
+  };
 
+  useEffect(() => {
     fetchOrders();
   }, []);
 
@@ -82,6 +82,9 @@ function Orders() {
       });
 
       console.log('🚀  res:', res);
+      setTimeout(() => {
+        fetchOrders();
+      }, 500);
     } catch (err) {
       console.error(err);
     }
